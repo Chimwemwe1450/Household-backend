@@ -1,7 +1,22 @@
 <?php
-header("Access-Control-Allow-Origin: *");  
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
+
+header("Referrer-Policy: no-referrer"); 
+
+
+ob_start();  
+
+
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
+    exit(); 
+}
 
 header("Content-Type: application/json");
 
@@ -12,50 +27,44 @@ $method = $_SERVER['REQUEST_METHOD'];
 switch ($method) {
     case 'GET':
         try {
-         
             $stmt = $pdo->query("SELECT email, password FROM registration");
             $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
             echo json_encode(['status' => 'success', 'data' => $users]);
         } catch (Exception $e) {
-  
             echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
         }
         break;
     
-        case 'POST':
-            try {
-                $data = json_decode(file_get_contents('php://input'), true);
-        
-                if (isset($data['name']) && isset($data['email']) && isset($data['password'])) {
-                    $name = $data['name'];
-                    $email = $data['email'];
-                    $password = $data['password'];
-        
-                    
-                    $stmt = $pdo->prepare("INSERT INTO registration (name, email, password) VALUES (?, ?, ?)");
-                    $stmt->bindParam(1, $name);
-                    $stmt->bindParam(2, $email);
-                    $stmt->bindParam(3, $password);
-        
-                    if ($stmt->execute()) {
-                        echo json_encode(['status' => 'success', 'message' => 'User created successfully']);
-                    } else {
-                        echo json_encode(['status' => 'error', 'message' => 'Failed to create user']);
-                    }
+    case 'POST':
+        try {
+            $data = json_decode(file_get_contents('php://input'), true);
+    
+            if (isset($data['name']) && isset($data['email']) && isset($data['password'])) {
+                $name = $data['name'];
+                $email = $data['email'];
+                $password = $data['password'];
+    
+                $stmt = $pdo->prepare("INSERT INTO registration (name, email, password) VALUES (?, ?, ?)");
+                $stmt->bindParam(1, $name);
+                $stmt->bindParam(2, $email);
+                $stmt->bindParam(3, $password);
+    
+                if ($stmt->execute()) {
+                    echo json_encode(['status' => 'success', 'message' => 'User created successfully']);
                 } else {
-                    echo json_encode(['status' => 'error', 'message' => 'Missing required fields']);
+                    echo json_encode(['status' => 'error', 'message' => 'Failed to create user']);
                 }
-            } catch (Exception $e) {
-                echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Missing required fields']);
             }
-            break;
-        
-
+        } catch (Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()]);
+        }
+        break;
+    
     case 'PUT':
         $data = json_decode(file_get_contents("php://input"), true);
 
-        // Check for required fields
         if (!isset($data['id'], $data['name'], $data['email'])) {
             echo json_encode(['status' => 'error', 'message' => 'Missing required fields']);
             exit;
@@ -67,7 +76,6 @@ switch ($method) {
         }
 
         try {
-            // Prepared statement for update
             $stmt = $pdo->prepare("UPDATE registration SET name = ?, email = ? WHERE id = ?");
             $stmt->execute([$data['name'], $data['email'], $data['id']]);
 
@@ -90,7 +98,6 @@ switch ($method) {
         }
 
         try {
-         
             $stmt = $pdo->prepare("DELETE FROM registration WHERE id = ?");
             $stmt->execute([$data['id']]);
 
@@ -108,4 +115,5 @@ switch ($method) {
         echo json_encode(['status' => 'error', 'message' => 'Invalid request method']);
         break;
 }
+
 ?>
