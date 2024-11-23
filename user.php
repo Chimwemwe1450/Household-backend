@@ -1,26 +1,13 @@
 <?php
 
-header("Referrer-Policy: no-referrer"); 
-
-
-ob_start();  
-
-
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: *");  
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
-
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-
-    header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-    header('Access-Control-Allow-Headers: Content-Type, Authorization');
-    exit(); 
-}
-
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Origin");
 header("Content-Type: application/json");
 
-require 'db.php';  
+ob_start();
+
+require 'db.php'; //
 
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -34,21 +21,21 @@ switch ($method) {
             echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
         }
         break;
-    
+
     case 'POST':
         try {
             $data = json_decode(file_get_contents('php://input'), true);
-    
+
             if (isset($data['name']) && isset($data['email']) && isset($data['password'])) {
                 $name = $data['name'];
                 $email = $data['email'];
                 $password = $data['password'];
-    
+
                 $stmt = $pdo->prepare("INSERT INTO registration (name, email, password) VALUES (?, ?, ?)");
                 $stmt->bindParam(1, $name);
                 $stmt->bindParam(2, $email);
                 $stmt->bindParam(3, $password);
-    
+
                 if ($stmt->execute()) {
                     echo json_encode(['status' => 'success', 'message' => 'User created successfully']);
                 } else {
@@ -61,7 +48,7 @@ switch ($method) {
             echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()]);
         }
         break;
-    
+
     case 'PUT':
         $data = json_decode(file_get_contents("php://input"), true);
 
@@ -115,5 +102,4 @@ switch ($method) {
         echo json_encode(['status' => 'error', 'message' => 'Invalid request method']);
         break;
 }
-
 ?>
