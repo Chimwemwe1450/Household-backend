@@ -1,25 +1,28 @@
-To set up and run your backend using XAMPP for your PHP script, follow these steps:
-
+Steps to Set Up and Run Your PHP Backend Using XAMPP
 1. Download and Install XAMPP
-Visit XAMPP's official website.
+Visit the official XAMPP website.
 Download the appropriate version for your operating system.
-Install XAMPP and ensure the following components are selected during installation:
-Apache
-2. Start XAMPP Control Panel
+Install XAMPP, ensuring that Apache and MySQL components are selected during installation.
+2. Start XAMPP and Configure Apache
 Open the XAMPP Control Panel.
-Start the Apache service by clicking on the Start button next to it.
-3. Set Up Your PHP Script
-Navigate to the folder where XAMPP is installed. By default, it's C:\xampp.
-Inside the htdocs directory, create a new folder for your project:
-C:\xampp\htdocs\phpscript
-Place your PHP files into this folder. For example:
-C:\xampp\htdocs\phpscript\index.php
-4. Run the Script
-Open your browser.
-Type the following URL in the address bar to access your script:
-plaintext
-Copy code
-http://localhost/phpscript/index.php
+Start the Apache service by clicking the Start button next to it.
+If you plan to use a database, start MySQL as well.
+3. Set Up Your PHP Project
+Navigate to your XAMPP installation folder (default: C:\xampp).
+
+Open the htdocs directory.
+
+Create a new folder for your project, e.g., phpscript. Your folder structure should look like this:
+C:\xampp\htdocs\phpscript.
+
+Add your PHP script files to this folder. For example:
+
+C:\xampp\htdocs\phpscript\index.php.
+4. Run Your PHP Script
+Open your web browser.
+Type the URL in the address bar:
+http://localhost/phpscript/index.php.
+Your PHP script should execute, and the result will display in the browser.
 
 
-known issue cors policy issue  if you want to test the SQL you can contact me 
+Contact Me for the SQL details 
